@@ -1,31 +1,36 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const authRoute = require('./routes/auth')
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const authRoute = require("./routes/auth");
 
-require('dotenv').config()
+require("dotenv").config();
 
 const connectDB = async () => {
-    try {
-        await mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@bme-admin.5yuf9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`)
-        console.log('Mongoose connected');
+  try {
+    await mongoose.connect(
+      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@bme-admin.5yuf9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+    );
+    console.log("Mongoose connected");
+  } catch (error) {
+    console.log(error.message);
+    process.exit(1);
+  }
+};
 
-    } catch (error) {
-        console.log(error.message);
-        process.exit(1)
-    }
-}
+connectDB();
 
-connectDB()
+const app = express();
 
-const app = express()
+app.use(express.json());
 
-app.use(express.json())
+app.use(cors());
 
-app.use(cors())
+app.use("/", (req, res) => {
+  res.send("This is test server page");
+});
 
-app.use('/api/auth', authRoute)
+app.use("/api/auth", authRoute);
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
